@@ -29,18 +29,28 @@ const mutations = {
 
 const actions = {
   // user login
-  login({ commit }, userInfo) {
+  async login({ commit }, userInfo) {
     const { username, password } = userInfo
-    return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
-    })
+    // return new Promise((resolve, reject) => {
+    //   login({ username: username.trim(), password: password }).then(response => {
+    //     const { data } = response
+    //     commit('SET_TOKEN', data.token)
+    //     setToken(data.token)
+    //     resolve()
+    //   }).catch(error => {
+    //     reject(error)
+    //   })
+    // })
+
+    // 将上面的写法改成 async await写法
+    const { code, data } = await login({ username: username.trim(), password: password })
+    if (code === 20000) {
+      commit('SET_TOKEN', data.token)
+      setToken(data.token)
+      return 'ok'
+    } else {
+      return new Promise(new Error('fail'))
+    }
   },
 
   // get user info
